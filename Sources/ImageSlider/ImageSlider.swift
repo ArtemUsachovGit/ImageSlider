@@ -6,7 +6,10 @@ public struct ImageSlider: View {
     
     @State private var currentValue: Double
     @State private var lastCoordinateValue: Double = 0.0
+    @State private var sliding: Bool = false
+    
     private let range: ClosedRange<Double>
+    private let feedback = UIImpactFeedbackGenerator(style: .soft)
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -34,7 +37,6 @@ public struct ImageSlider: View {
             ZStack {
                 HStack {}
                     .frame(width: size.width, height: size.height * 0.75)
-                    .cornerRadius(radius)
                     .background(LinearGradient(colors: configurator.colors,
                                                startPoint: .leading,
                                                endPoint: .trailing))
@@ -44,15 +46,22 @@ public struct ImageSlider: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: thumbSize, height: thumbSize)
+                        .scaleEffect(sliding ? 1.2 : 1)
+                        .animation(.default, value: sliding)
                         .offset(x: sliderViewXOffset)
                         .gesture(
                             DragGesture(minimumDistance: 0.0)
                                 .onChanged { value in
+                                    feedback.impactOccurred(intensity: 0.5)
+                                    sliding = true
                                     let translationWidth = value.translation.width
                                     let nextCoordinateValue = nextCoordinate(translationWidth, sliderViewXOffset, maxX)
                                     let currentValue = nextCoordinateValue / scaleFactor
                                     self.value = (floor(currentValue) * configurator.step) + range.lowerBound
                                     self.currentValue = currentValue + range.lowerBound
+                                }
+                                .onEnded { _ in
+                                    sliding = false
                                 }
                         )
                     Spacer()
