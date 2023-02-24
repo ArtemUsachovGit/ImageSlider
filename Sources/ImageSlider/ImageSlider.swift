@@ -9,7 +9,7 @@ public struct ImageSlider: View {
     @State private var sliding: Bool = false
     
     private let range: ClosedRange<Double>
-    private let feedback = UIImpactFeedbackGenerator(style: .soft)
+    private let feedback = UISelectionFeedbackGenerator()
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -52,7 +52,9 @@ public struct ImageSlider: View {
                         .gesture(
                             DragGesture(minimumDistance: 0.0)
                                 .onChanged { value in
-                                    feedback.impactOccurred(intensity: 0.5)
+                                    if sliding == false {
+                                        feedback.selectionChanged()
+                                    }
                                     sliding = true
                                     let translationWidth = value.translation.width
                                     let nextCoordinateValue = nextCoordinate(translationWidth, sliderViewXOffset, maxX)
@@ -61,6 +63,7 @@ public struct ImageSlider: View {
                                     self.currentValue = currentValue + range.lowerBound
                                 }
                                 .onEnded { _ in
+                                    feedback.selectionChanged()
                                     sliding = false
                                 }
                         )
