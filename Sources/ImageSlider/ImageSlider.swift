@@ -12,7 +12,7 @@ public struct ImageSlider: View {
     
     public init(value: Binding<Double>, configurator: ImageSliderConfigurator) {
         _value = value
-        _currentValue = State(wrappedValue: value.wrappedValue)
+        _currentValue = State(wrappedValue: value.wrappedValue/configurator.step)
         
         self.configurator = configurator
         
