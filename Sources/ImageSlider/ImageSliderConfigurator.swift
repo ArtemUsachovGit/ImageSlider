@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Artem Usachov on 18.11.2022.
-//
-
 import SwiftUI
 
 public protocol ImageSliderConfigurator {
